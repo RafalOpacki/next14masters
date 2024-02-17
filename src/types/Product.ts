@@ -1,8 +1,15 @@
+type Rating = {
+	rate: number;
+	count: number;
+};
+
 export type Product = {
 	id: string;
-	category: string;
-	name: string;
-	description: string;
+	title: string;
 	price: number;
-	img: { alt: string; src: string };
+	description: string;
+	category: string;
+	rating: Rating;
+	image: string;
+	longDescription: string;
 };
