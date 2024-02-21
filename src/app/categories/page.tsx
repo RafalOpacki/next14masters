@@ -1,6 +1,6 @@
+import { notFound } from "next/navigation";
 import { CategoriesGetDocument } from "@/gql/graphql";
 import { executeGraphql } from "@/graphql/executeGraphql";
-import { notFound } from "next/navigation";
 
 export default async function CategoriesPage() {
 	const { categories } = await executeGraphql(CategoriesGetDocument, { take: 4 });

@@ -1,6 +1,6 @@
+import { notFound } from "next/navigation";
 import { CategoryGetProductsDocument } from "@/gql/graphql";
 import { executeGraphql } from "@/graphql/executeGraphql";
-import { notFound } from "next/navigation";
 
 type CategoriesPageProps = {
 	params: {
