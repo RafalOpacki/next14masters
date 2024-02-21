@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation";
-import { CollectionGetProductsDocument } from "@/gql/graphql";
+import { CollectionGetBySlugDocument, CollectionGetProductsDocument } from "@/gql/graphql";
 import { executeGraphql } from "@/graphql/executeGraphql";
 import { ProductList } from "@/ui/organisms/ProductList/ProductList";
 
@@ -8,6 +8,16 @@ type CollectionPageProps = {
 		collection: string;
 	};
 };
+
+export async function generateMetadata({ params }: CollectionPageProps) {
+	const { collection } = await executeGraphql(CollectionGetBySlugDocument, {
+		slug: params.collection,
+	});
+
+	return {
+		title: collection?.name ?? "",
+	};
+}
 
 export default async function CollectionPage({ params }: CollectionPageProps) {
 	const { collection } = await executeGraphql(CollectionGetProductsDocument, {

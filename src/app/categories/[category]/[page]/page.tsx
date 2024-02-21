@@ -1,6 +1,6 @@
 import { type Route } from "next";
 import { notFound } from "next/navigation";
-import { CategoryGetProductsDocument } from "@/gql/graphql";
+import { CategoryGetBySlugDocument, CategoryGetProductsDocument } from "@/gql/graphql";
 import { executeGraphql } from "@/graphql/executeGraphql";
 import { Pagination } from "@/ui/molecules/Pagination/Pagination";
 import { ProductList } from "@/ui/organisms/ProductList/ProductList";
@@ -11,6 +11,14 @@ type CategoriesPageProps = {
 		category: string;
 	};
 };
+
+export async function generateMetadata({ params }: CategoriesPageProps) {
+	const { category } = await executeGraphql(CategoryGetBySlugDocument, { slug: params.category });
+
+	return {
+		title: category?.name ?? "",
+	};
+}
 
 export default async function CategoriesPage({ params }: CategoriesPageProps) {
 	const { category } = await executeGraphql(CategoryGetProductsDocument, { slug: params.category });

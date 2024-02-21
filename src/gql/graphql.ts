@@ -272,7 +272,12 @@ export type SortDirection =
   | 'ASC'
   | 'DESC';
 
-export type CategoryDataFragment = { name: string, products: Array<{ id: string, name: string, price: number, categories: Array<{ name: string }>, images: Array<{ url: string }> }> };
+export type CategoryGetBySlugQueryVariables = Exact<{
+  slug: Scalars['String']['input'];
+}>;
+
+
+export type CategoryGetBySlugQuery = { category?: { name: string } | null };
 
 export type CategoryGetProductsQueryVariables = Exact<{
   slug: Scalars['String']['input'];
@@ -288,6 +293,13 @@ export type CategoriesGetQueryVariables = Exact<{
 
 
 export type CategoriesGetQuery = { categories: { data: Array<{ id: string, name: string, slug: string }>, meta: { count: number, total: number } } };
+
+export type CollectionGetBySlugQueryVariables = Exact<{
+  slug: Scalars['String']['input'];
+}>;
+
+
+export type CollectionGetBySlugQuery = { collection?: { name: string } | null };
 
 export type CollectionGetProductsQueryVariables = Exact<{
   slug: Scalars['String']['input'];
@@ -328,6 +340,16 @@ export type ProductsGetQuery = { products: { data: Array<{ id: string, name: str
 
 export type ProductsListItemFragment = { id: string, name: string, price: number, categories: Array<{ name: string }>, images: Array<{ url: string }> };
 
+export type CategoriesGetMenuItemsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CategoriesGetMenuItemsQuery = { categories: { data: Array<{ name: string, slug: string }> } };
+
+export type CollectionsGetMenuItemsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CollectionsGetMenuItemsQuery = { collections: { data: Array<{ name: string, slug: string }> } };
+
 export class TypedDocumentString<TResult, TVariables>
   extends String
   implements DocumentTypeDecoration<TResult, TVariables>
@@ -342,37 +364,6 @@ export class TypedDocumentString<TResult, TVariables>
     return this.value;
   }
 }
-export const ProductsListItemFragmentDoc = new TypedDocumentString(`
-    fragment ProductsListItem on Product {
-  id
-  name
-  price
-  categories {
-    name
-  }
-  images {
-    url
-  }
-}
-    `, {"fragmentName":"ProductsListItem"}) as unknown as TypedDocumentString<ProductsListItemFragment, unknown>;
-export const CategoryDataFragmentDoc = new TypedDocumentString(`
-    fragment CategoryData on Category {
-  name
-  products {
-    ...ProductsListItem
-  }
-}
-    fragment ProductsListItem on Product {
-  id
-  name
-  price
-  categories {
-    name
-  }
-  images {
-    url
-  }
-}`, {"fragmentName":"CategoryData"}) as unknown as TypedDocumentString<CategoryDataFragment, unknown>;
 export const CollectionDataFragmentDoc = new TypedDocumentString(`
     fragment CollectionData on Collection {
   id
@@ -391,6 +382,26 @@ export const ProductDetailsFragmentDoc = new TypedDocumentString(`
   }
 }
     `, {"fragmentName":"ProductDetails"}) as unknown as TypedDocumentString<ProductDetailsFragment, unknown>;
+export const ProductsListItemFragmentDoc = new TypedDocumentString(`
+    fragment ProductsListItem on Product {
+  id
+  name
+  price
+  categories {
+    name
+  }
+  images {
+    url
+  }
+}
+    `, {"fragmentName":"ProductsListItem"}) as unknown as TypedDocumentString<ProductsListItemFragment, unknown>;
+export const CategoryGetBySlugDocument = new TypedDocumentString(`
+    query CategoryGetBySlug($slug: String!) {
+  category(slug: $slug) {
+    name
+  }
+}
+    `) as unknown as TypedDocumentString<CategoryGetBySlugQuery, CategoryGetBySlugQueryVariables>;
 export const CategoryGetProductsDocument = new TypedDocumentString(`
     query CategoryGetProducts($slug: String!) {
   category(slug: $slug) {
@@ -426,6 +437,13 @@ export const CategoriesGetDocument = new TypedDocumentString(`
   }
 }
     `) as unknown as TypedDocumentString<CategoriesGetQuery, CategoriesGetQueryVariables>;
+export const CollectionGetBySlugDocument = new TypedDocumentString(`
+    query CollectionGetBySlug($slug: String!) {
+  collection(slug: $slug) {
+    name
+  }
+}
+    `) as unknown as TypedDocumentString<CollectionGetBySlugQuery, CollectionGetBySlugQueryVariables>;
 export const CollectionGetProductsDocument = new TypedDocumentString(`
     query CollectionGetProducts($slug: String!) {
   collection(slug: $slug) {
@@ -519,3 +537,23 @@ export const ProductsGetDocument = new TypedDocumentString(`
     url
   }
 }`) as unknown as TypedDocumentString<ProductsGetQuery, ProductsGetQueryVariables>;
+export const CategoriesGetMenuItemsDocument = new TypedDocumentString(`
+    query CategoriesGetMenuItems {
+  categories {
+    data {
+      name
+      slug
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CategoriesGetMenuItemsQuery, CategoriesGetMenuItemsQueryVariables>;
+export const CollectionsGetMenuItemsDocument = new TypedDocumentString(`
+    query CollectionsGetMenuItems {
+  collections {
+    data {
+      name
+      slug
+    }
+  }
+}
+    `) as unknown as TypedDocumentString<CollectionsGetMenuItemsQuery, CollectionsGetMenuItemsQueryVariables>;
