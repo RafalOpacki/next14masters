@@ -21,7 +21,8 @@ export const ActiveLink = ({
 }: PropsWithChildren<ActiveLinkProps>) => {
 	const pathname = usePathname();
 
-	const isActive = exact ? pathname === href : pathname.startsWith(href);
+	// split("?") used to remove query params from exact path
+	const isActive = exact ? pathname === href.split("?")[0] : pathname.startsWith(href);
 	const classnames = `${className} ${isActive ? activeClassName : ""}`;
 
 	return (

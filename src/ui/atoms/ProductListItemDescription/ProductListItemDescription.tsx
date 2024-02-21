@@ -1,21 +1,21 @@
-import type { Product } from "@/types/Product";
+import { type ProductsListItemFragment } from "@/gql/graphql";
 import { priceFormatter } from "@/utils/priceFormatter";
 
 type ProductListItemDescriptionProps = {
-	title: Product["title"];
-	category: Product["category"];
-	price: Product["price"];
+	name: ProductsListItemFragment["name"];
+	category: ProductsListItemFragment["categories"][0]["name"];
+	price: ProductsListItemFragment["price"];
 };
 
 export const ProductListItemDescription = ({
+	name,
 	category,
-	title,
 	price,
 }: ProductListItemDescriptionProps) => {
 	return (
 		<div className="mt-2 flex justify-between">
 			<div>
-				<h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200">{title}</h3>
+				<h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200">{name}</h3>
 				<p className="text-sm text-gray-500 dark:text-gray-300">
 					<span className="sr-only">Kategoria:</span>
 					{category}

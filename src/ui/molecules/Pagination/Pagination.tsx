@@ -1,6 +1,7 @@
 "use client";
 
 import { type Route } from "next";
+import { useSearchParams } from "next/navigation";
 import { PaginationActiveLink } from "@/ui/molecules/PaginationActiveLink/PaginationActiveLink";
 
 type PaginationProps = {
@@ -9,6 +10,9 @@ type PaginationProps = {
 };
 
 export const Pagination = ({ route, totalPages }: PaginationProps) => {
+	const searchParams = useSearchParams().toString();
+	const queryParams = new URLSearchParams(searchParams).toString();
+
 	return (
 		<article
 			aria-label="pagination"
@@ -16,7 +20,11 @@ export const Pagination = ({ route, totalPages }: PaginationProps) => {
 		>
 			{Array.from({ length: totalPages }, (_, i) => (
 				// TODO - as do wywalenia?
-				<PaginationActiveLink key={i} href={`${route}/${i + 1}` as Route} exact={true}>
+				<PaginationActiveLink
+					key={i}
+					href={`${route}/${i + 1}?${queryParams}` as Route}
+					exact={true}
+				>
 					{i + 1}
 				</PaginationActiveLink>
 			))}

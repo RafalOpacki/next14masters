@@ -21,7 +21,7 @@ export default function RootLayout({
 				<header className="fixed top-0 z-50 mx-auto w-screen border-b border-gray-400 backdrop-blur">
 					<Navbar />
 				</header>
-				<main className="mx-auto mt-20 max-w-2xl px-8 py-8 sm:px-6 lg:max-w-7xl">{children}</main>
+				<main className="mx-auto mt-20 max-w-2xl py-8 lg:max-w-7xl">{children}</main>
 			</body>
 		</html>
 	);
