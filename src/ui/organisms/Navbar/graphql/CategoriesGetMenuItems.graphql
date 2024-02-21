@@ -1,0 +1,8 @@
+query CategoriesGetMenuItems {
+	categories {
+		data {
+			name
+			slug
+		}
+	}
+}

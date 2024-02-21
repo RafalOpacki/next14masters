@@ -1,0 +1,8 @@
+query CollectionsGetMenuItems {
+	collections {
+		data {
+			name
+			slug
+		}
+	}
+}
