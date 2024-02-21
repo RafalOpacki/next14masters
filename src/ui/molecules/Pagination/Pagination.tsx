@@ -9,7 +9,7 @@ type PaginationProps = {
 	queryParams?: string;
 };
 
-export const Pagination = ({ route, totalPages, queryParams }: PaginationProps) => {
+export const Pagination = ({ route, totalPages, queryParams = "" }: PaginationProps) => {
 	return (
 		<article
 			aria-label="pagination"

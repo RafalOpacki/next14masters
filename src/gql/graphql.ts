@@ -394,16 +394,13 @@ export const ProductDetailsFragmentDoc = new TypedDocumentString(`
 export const CategoryGetProductsDocument = new TypedDocumentString(`
     query CategoryGetProducts($slug: String!) {
   category(slug: $slug) {
-    ...CategoryData
+    name
+    products {
+      ...ProductsListItem
+    }
   }
 }
-    fragment CategoryData on Category {
-  name
-  products {
-    ...ProductsListItem
-  }
-}
-fragment ProductsListItem on Product {
+    fragment ProductsListItem on Product {
   id
   name
   price

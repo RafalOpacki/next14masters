@@ -1,6 +1,9 @@
+import { type Route } from "next";
 import { notFound } from "next/navigation";
 import { CategoryGetProductsDocument } from "@/gql/graphql";
 import { executeGraphql } from "@/graphql/executeGraphql";
+import { Pagination } from "@/ui/molecules/Pagination/Pagination";
+import { ProductList } from "@/ui/organisms/ProductList/ProductList";
 
 type CategoriesPageProps = {
 	params: {
@@ -18,10 +21,10 @@ export default async function CategoriesPage({ params }: CategoriesPageProps) {
 
 	return (
 		<>
-			<h1>{category.name}</h1>
-			{category?.products.map(({ id, name }) => {
-				return <h2 key={id}>{name}</h2>;
-			})}
+			<h1 className="mb-8 text-2xl">{category.name}</h1>
+			<ProductList products={category.products} />
+			{/* {TODO!!!} */}
+			<Pagination route={`/categories/${params.category}` as Route} totalPages={2} />
 		</>
 	);
 }
