@@ -1,9 +1,9 @@
-import { getProducts } from "@/app/products/[page]/api";
+import { ProductsGetDocument } from "@/gql/graphql";
+import { executeGraphql } from "@/graphql/executeGraphql";
 import { ProductList } from "@/ui/organisms/ProductList/ProductList";
 
 export default async function HomePage() {
-	// TODO - remove
-	const products = await getProducts({ page: 1, take: 20 });
+	const { products } = await executeGraphql(ProductsGetDocument, { take: 4 });
 
-	return <ProductList products={products} />;
+	return <ProductList products={products.data} />;
 }

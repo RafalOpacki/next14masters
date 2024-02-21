@@ -1,0 +1,5 @@
+query CategoryGetProducts($slug: String!) {
+	category(slug: $slug) {
+		...CategoryData
+	}
+}

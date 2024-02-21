@@ -1,23 +1,42 @@
-import { getProducts, getProductsCount } from "@/app/products/[page]/api";
+import { notFound } from "next/navigation";
+import { ProductsGetDocument } from "@/gql/graphql";
+import { executeGraphql } from "@/graphql/executeGraphql";
+import { Pagination } from "@/ui/molecules/Pagination/Pagination";
 import { ProductList } from "@/ui/organisms/ProductList/ProductList";
 
-type Params = {
+type ProductsProps = {
 	params: { page: string };
 };
 
 export const generateStaticParams = async () => {
-	// TODO - ogarnąć tu
-	const productsCount = await getProductsCount();
-	const paths = Array.from({ length: productsCount }, (path, i) => i + 1);
-	const staticPaths = paths.map((page) => ({
-		params: { page: page },
+	const { products } = await executeGraphql(ProductsGetDocument, { take: 5 });
+
+	const ids = products.data.map(({ id }) => id);
+
+	const staticPaths = ids.map((id) => ({
+		params: { page: id },
 	}));
 	return staticPaths;
 };
 
-// get total
-export default async function Products({ params: { page } }: Params) {
-	const products = await getProducts({ page: +page });
+const productsPerPage = 4;
 
-	return <ProductList products={products} />;
+export default async function Products({ params }: ProductsProps) {
+	const { products } = await executeGraphql(ProductsGetDocument, {
+		take: productsPerPage,
+		skip: productsPerPage * (+params.page - 1),
+	});
+
+	if (!products) {
+		notFound();
+	}
+
+	const totalPages = Math.ceil(products.meta.total / productsPerPage);
+
+	return (
+		<>
+			<ProductList products={products.data} />
+			<Pagination route="/products" totalPages={totalPages} />
+		</>
+	);
 }

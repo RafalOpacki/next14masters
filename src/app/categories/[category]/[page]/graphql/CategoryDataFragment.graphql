@@ -1,0 +1,6 @@
+fragment CategoryData on Category {
+	name
+	products {
+		...ProductsListItem
+	}
+}

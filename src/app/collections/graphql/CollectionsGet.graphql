@@ -1,0 +1,10 @@
+query CollectionsGet {
+	collections {
+		data {
+			...CollectionData
+		}
+		meta {
+			total
+		}
+	}
+}

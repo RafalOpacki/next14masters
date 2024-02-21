@@ -9,7 +9,7 @@ const nextConfig = {
 		remotePatterns: [
 			{
 				protocol: "https",
-				hostname: "naszsklep-api.vercel.app",
+				hostname: "static-ourstore.hyperfunctor.com",
 				port: "",
 				pathname: "**/**",
 			},
@@ -20,6 +20,11 @@ const nextConfig = {
 			{
 				source: "/products",
 				destination: "/products/1",
+				permanent: true,
+			},
+			{
+				source: "/categories/:category",
+				destination: "/categories/:category/1",
 				permanent: true,
 			},
 		];

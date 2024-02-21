@@ -1,0 +1,7 @@
+query ProductGetRelated {
+	products(take: 4) {
+		data {
+			...ProductsListItem
+		}
+	}
+}
