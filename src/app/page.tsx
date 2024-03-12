@@ -3,7 +3,11 @@ import { executeGraphql } from "@/graphql/executeGraphql";
 import { ProductList } from "@/ui/organisms/ProductList/ProductList";
 
 export default async function HomePage() {
-	const { products } = await executeGraphql(ProductsGetDocument, { take: 4 });
+	const { products } = await executeGraphql({ query: ProductsGetDocument, variables: { take: 4 } });
 
-	return <ProductList products={products.data} />;
+	return (
+		<section>
+			<ProductList products={products.data} />
+		</section>
+	);
 }

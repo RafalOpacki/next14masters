@@ -3,7 +3,7 @@ import { CollectionsGetDocument } from "@/gql/graphql";
 import { executeGraphql } from "@/graphql/executeGraphql";
 
 export default async function CollectionsPage() {
-	const { collections } = await executeGraphql(CollectionsGetDocument, {});
+	const { collections } = await executeGraphql({ query: CollectionsGetDocument });
 
 	if (!collections) {
 		notFound();

@@ -1,0 +1,6 @@
+fragment ReviewData on Product {
+	rating
+	reviews {
+		...Review
+	}
+}
