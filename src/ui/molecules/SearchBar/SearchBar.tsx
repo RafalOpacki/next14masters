@@ -1,8 +1,16 @@
 "use client";
 
+import clsx from "clsx";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
+
+const baseClassName =
+	"h-8 w-fill overflow-hidden rounded-lg border bg-gray-50 px-4 py-2 outline-none focus:shadow-md";
+const lightModeClassName =
+	"border-gray-300 placeholder-gray-300 shadow-gray-500 focus:border-gray-500";
+const darkModeClassName =
+	"dark:border-gray-400 dark:placeholder-gray-200 dark:shadow-gray-200 dark:focus:border-gray-200";
 
 export const SearchBar = () => {
 	const router = useRouter();
@@ -24,24 +32,7 @@ export const SearchBar = () => {
 		<input
 			type="search"
 			onChange={handleChange}
-			className="
-            w-1/4 
-            overflow-hidden 
-            rounded-lg 
-            border-2 
-            border-gray-600 
-            bg-transparent 
-            px-4 
-            py-2 
-            placeholder-gray-600 
-            shadow-gray-500
-            outline-none 
-            focus:border-gray-800 
-            focus:shadow-md 
-            dark:border-gray-400
-            dark:placeholder-gray-200 
-            dark:shadow-gray-200 
-            dark:focus:border-gray-200"
+			className={clsx(baseClassName, lightModeClassName, darkModeClassName)}
 			placeholder="Search..."
 			value={query}
 		/>

@@ -1,7 +1,9 @@
 import { type Route } from "next";
+import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { CategoriesGetMenuItemsDocument, CollectionsGetMenuItemsDocument } from "@/gql/graphql";
 import { executeGraphql } from "@/graphql/executeGraphql";
-import { NavbarActiveLink } from "@/ui/molecules/NavbarActiveLink/NavbarActiveLink";
+import { CartButton } from "@/ui/atoms/CartButton/CartButton";
+import { NavbarMenuItem } from "@/ui/molecules/NavbarMenuItem/NavbarMenuItem";
 import { SearchBar } from "@/ui/molecules/SearchBar/SearchBar";
 
 const navItems: { href: Route; title: string; exact: boolean }[] = [
@@ -28,41 +30,49 @@ const navItems: { href: Route; title: string; exact: boolean }[] = [
 ];
 
 export const Navbar = async () => {
-	const { categories } = await executeGraphql(CategoriesGetMenuItemsDocument, {});
-	const { collections } = await executeGraphql(CollectionsGetMenuItemsDocument, {});
+	const { categories } = await executeGraphql({ query: CategoriesGetMenuItemsDocument });
+	const { collections } = await executeGraphql({ query: CollectionsGetMenuItemsDocument });
 
 	return (
-		<nav className="mx-auto flex max-w-2xl justify-between p-4 lg:max-w-7xl">
-			<ul className="flex items-center gap-16">
+		<nav className="mx-auto flex h-full max-w-2xl items-center justify-between lg:max-w-7xl">
+			<ul className="flex h-full items-center gap-8">
 				{navItems.map(({ href, title, exact }) => {
-					return (
-						<li key={title}>
-							<NavbarActiveLink exact={exact} href={href}>
-								{title}
-							</NavbarActiveLink>
-						</li>
-					);
+					return <NavbarMenuItem key={title} href={href} title={title} exact={exact} />;
 				})}
 				{collections.data.map(({ name, slug }) => {
 					return (
-						<li key={name}>
-							<NavbarActiveLink exact={false} href={`/collections/${slug}` as Route}>
-								{name}
-							</NavbarActiveLink>
-						</li>
+						<NavbarMenuItem
+							key={name}
+							href={`/collections/${slug}` as Route}
+							title={name}
+							exact={false}
+						/>
 					);
 				})}
 				{categories.data.map(({ name, slug }) => {
 					return (
-						<li key={name}>
-							<NavbarActiveLink exact={false} href={`/categories/${slug}` as Route}>
-								{name}
-							</NavbarActiveLink>
-						</li>
+						<NavbarMenuItem
+							key={name}
+							href={`/categories/${slug}` as Route}
+							title={name}
+							exact={false}
+						/>
 					);
 				})}
 			</ul>
-			<SearchBar />
+			<div className="flex items-center gap-8">
+				<SearchBar />
+				<CartButton />
+				<div>
+					{/* TODO - osobny komponent na to */}
+					<SignedIn>
+						<UserButton />
+					</SignedIn>
+					<SignedOut>
+						<SignInButton />
+					</SignedOut>
+				</div>
+			</div>
 		</nav>
 	);
 };

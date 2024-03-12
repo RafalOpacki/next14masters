@@ -17,6 +17,7 @@ export const ProductListItem = ({ product }: ProductListItemProps) => {
 						name={product.name}
 						category={product.categories[0].name}
 						price={product.price}
+						rating={product.rating}
 					/>
 				</article>
 			</Link>
