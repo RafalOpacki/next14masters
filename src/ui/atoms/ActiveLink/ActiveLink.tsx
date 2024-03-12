@@ -23,10 +23,13 @@ export const ActiveLink = ({
 
 	// split("?") used to remove query params from exact path
 	const isActive = exact ? pathname === href.split("?")[0] : pathname.startsWith(href);
-	const classnames = `${className} ${isActive ? activeClassName : ""}`;
 
 	return (
-		<Link className={classnames} aria-current={isActive ? "page" : undefined} href={href}>
+		<Link
+			className={isActive ? activeClassName : className}
+			aria-current={isActive ? "page" : undefined}
+			href={href}
+		>
 			{children}
 		</Link>
 	);

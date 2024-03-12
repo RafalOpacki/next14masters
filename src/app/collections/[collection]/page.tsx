@@ -10,8 +10,11 @@ type CollectionPageProps = {
 };
 
 export async function generateMetadata({ params }: CollectionPageProps) {
-	const { collection } = await executeGraphql(CollectionGetBySlugDocument, {
-		slug: params.collection,
+	const { collection } = await executeGraphql({
+		query: CollectionGetBySlugDocument,
+		variables: {
+			slug: params.collection,
+		},
 	});
 
 	return {
@@ -20,8 +23,11 @@ export async function generateMetadata({ params }: CollectionPageProps) {
 }
 
 export default async function CollectionPage({ params }: CollectionPageProps) {
-	const { collection } = await executeGraphql(CollectionGetProductsDocument, {
-		slug: params.collection,
+	const { collection } = await executeGraphql({
+		query: CollectionGetProductsDocument,
+		variables: {
+			slug: params.collection,
+		},
 	});
 
 	if (!collection) {
@@ -29,9 +35,9 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
 	}
 
 	return (
-		<>
+		<section>
 			<h1 className="mb-8 text-2xl">{collection.name}</h1>
 			<ProductList products={collection.products} />
-		</>
+		</section>
 	);
 }

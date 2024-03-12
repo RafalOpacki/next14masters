@@ -8,18 +8,24 @@ type SearchPageProps = {
 	};
 };
 
+// TODO - obgługa przy braku query lub 1 znaku
+
 export default async function SearchPage({ searchParams }: SearchPageProps) {
-	const { products } = await executeGraphql(ProductsGetDocument, {
-		search: searchParams.query,
+	const { products } = await executeGraphql({
+		query: ProductsGetDocument,
+		variables: {
+			search: searchParams.query,
+		},
 	});
 
 	return (
-		<section>
-			{products.meta.count === 0 ? (
-				<p className="text-xl">Found 0 items for phrase {`"${searchParams.query}"`}</p>
-			) : (
-				<ProductList products={products.data} />
-			)}
+		<section className="w-full">
+			<div className="mb-10 flex h-20 w-full items-center border border-gray-200 bg-gray-100 p-8 ">
+				<p className="text-xl">
+					Found {products.data.length} items for phrase {`"${searchParams.query}"`}
+				</p>
+			</div>
+			{products.meta.count && <ProductList products={products.data} />}
 		</section>
 	);
 }
