@@ -1,0 +1,6 @@
+fragment ProductDetailsWithCategories on Product {
+	...ProductDetails
+	categories {
+		name
+	}
+}

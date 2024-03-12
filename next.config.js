@@ -3,7 +3,10 @@
 const nextConfig = {
 	experimental: {
 		typedRoutes: true,
+		mdxRs: true,
+		serverActions: true,
 	},
+	pageExtensions: ["ts", "tsx", "mdx"],
 	// TODO - remove later
 	images: {
 		remotePatterns: [
@@ -31,4 +34,5 @@ const nextConfig = {
 	},
 };
 
-export default nextConfig;
+const withMDX = require("@next/mdx")();
+module.exports = withMDX(nextConfig);
