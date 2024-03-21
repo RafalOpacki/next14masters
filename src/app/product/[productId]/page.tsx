@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import { ProductGetByIdDocument, ReviewsGetByProductIdDocument } from "@/gql/graphql";
 import { executeGraphql } from "@/graphql/executeGraphql";
