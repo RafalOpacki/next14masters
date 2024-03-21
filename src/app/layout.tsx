@@ -1,10 +1,10 @@
-import { Footer } from "@/ui/organisms/Footer/Footer";
-import { Header } from "@/ui/organisms/Header/Header";
 import { ClerkProvider } from "@clerk/nextjs";
 import clsx from "clsx";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import { type ReactNode } from "react";
+import { Footer } from "@/ui/organisms/Footer/Footer";
+import { Header } from "@/ui/organisms/Header/Header";
 import "./globals.css";
 
 const roboto = Roboto({ subsets: ["latin"], weight: ["100", "300", "400", "500", "700", "900"] });
