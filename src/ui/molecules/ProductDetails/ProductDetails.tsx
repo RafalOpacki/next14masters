@@ -1,4 +1,8 @@
+import { revalidateTag } from "next/cache";
+import { cookies } from "next/headers";
+import { addToCart, changeItemQuantity, createCart, getCartById } from "@/app/cart/actions";
 import { type ProductDetailsFragment } from "@/gql/graphql";
+import { AddToCartButton } from "@/ui/atoms/AddToCartButton/AddToCartButton";
 import { ProductDetailsDescription } from "@/ui/atoms/ProductDetailsDescription/ProductDetailsDescription";
 import { ProductDetailsImage } from "@/ui/atoms/ProductDetailsImage/ProductDetailsImage";
 
@@ -6,10 +10,41 @@ type ProductDetailsProps = {
 	product: ProductDetailsFragment;
 };
 
+async function getOrCreateCart() {
+	const cartId = cookies().get("cartId")?.value;
+
+	if (cartId) {
+		return getCartById();
+	} else {
+		return createCart();
+	}
+}
+
 export const ProductDetails = ({ product }: ProductDetailsProps) => {
 	async function addProductToCartAction() {
 		"use server";
-		console.log("addProductToCartAction");
+		const cart = await getOrCreateCart();
+
+		if (!cart) {
+			throw new Error("Failed to create cart");
+		}
+		cookies().set("cartId", cart.cartFindOrCreate.id);
+
+		const itemFromCart = cart.cartFindOrCreate.items.filter(
+			(item) => item.product.id === product.id,
+		);
+
+		if (itemFromCart && itemFromCart.length > 0) {
+			await changeItemQuantity(
+				cart.cartFindOrCreate.id,
+				product.id,
+				Number(itemFromCart[0]?.quantity) + 1,
+			);
+		} else {
+			await addToCart(cart.cartFindOrCreate.id, product.id);
+		}
+
+		revalidateTag("cart");
 	}
 
 	return (
@@ -25,12 +60,7 @@ export const ProductDetails = ({ product }: ProductDetailsProps) => {
 						price={product.price}
 						name={product.name}
 					/>
-					<button
-						type="submit"
-						className="mt-6 w-full rounded-md border bg-slate-700 px-8 py-3 text-white"
-					>
-						Add to cart
-					</button>
+					<AddToCartButton />
 				</div>
 			</form>
 		</article>
