@@ -29,6 +29,7 @@ export default async function CartPage() {
 
 	return (
 		<>
+			{/* TODO - rozbić na automic design */}
 			<ul className="divide-y divide-gray-100 border-b border-t border-gray-100">
 				{cartFindOrCreate.items.map(({ product, quantity }) => {
 					return (
