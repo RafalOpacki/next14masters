@@ -1,5 +1,11 @@
-query ProductsGet($search: String, $take: Int, $skip: Int) {
-	products(search: $search, take: $take, skip: $skip) {
+query ProductsGet(
+	$search: String
+	$take: Int
+	$skip: Int
+	$order: SortDirection
+	$orderBy: ProductSortBy
+) {
+	products(search: $search, take: $take, skip: $skip, order: $order, orderBy: $orderBy) {
 		data {
 			...ProductsListItem
 		}

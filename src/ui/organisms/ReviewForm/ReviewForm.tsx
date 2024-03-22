@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 import clsx from "clsx";
-import { ReviewCreateDocument, type ProductDetailsFragment } from "@/gql/graphql";
+import {
+	ReviewCreateDocument,
+	type ProductDetailsFragment,
+	type ReviewFragment,
+} from "@/gql/graphql";
 import { executeGraphql } from "@/graphql/executeGraphql";
 import { StarIcon } from "@/ui/atoms/StarIcon/StarIcon";
 
@@ -12,21 +16,30 @@ const baseFieldClassName =
 
 type ReviewFormProps = {
 	productId: ProductDetailsFragment["id"];
+	handleAddNewReview: (review: ReviewFragment) => void;
 };
 
-export const ReviewForm = ({ productId }: ReviewFormProps) => {
+export const ReviewForm = ({ productId, handleAddNewReview }: ReviewFormProps) => {
 	const [rating, setRating] = useState<number | null>(null);
 
 	const submitFormAction = async (formData: FormData) => {
+		const newReview = {
+			// TODO
+			id: Math.random().toString(),
+			author: formData.get("name")?.toString() ?? "",
+			email: formData.get("email")?.toString() ?? "",
+			description: formData.get("content")?.toString() ?? "",
+			rating: rating ?? 0,
+			title: formData.get("headline")?.toString() ?? "",
+		};
+
+		handleAddNewReview(newReview);
+
 		await executeGraphql({
 			query: ReviewCreateDocument,
 			variables: {
-				author: formData.get("name")?.toString() ?? "",
-				email: formData.get("email")?.toString() ?? "",
-				productId: productId,
-				description: formData.get("content")?.toString() ?? "",
-				rating: rating ?? 0,
-				title: formData.get("headline")?.toString() ?? "",
+				...newReview,
+				productId,
 			},
 		});
 	};
@@ -59,7 +72,7 @@ export const ReviewForm = ({ productId }: ReviewFormProps) => {
 							<input
 								type="radio"
 								name="rating"
-								hidden
+								className="sr-only"
 								value={index + 1}
 								onChange={() => setRating(index + 1)}
 							/>

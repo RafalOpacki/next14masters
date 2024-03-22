@@ -16,7 +16,6 @@ export const Pagination = ({ route, totalPages, queryParams = "" }: PaginationPr
 			className="mt-12 flex w-full items-center justify-center gap-8"
 		>
 			{Array.from({ length: totalPages }, (_, i) => (
-				// TODO - as do wywalenia?
 				<PaginationActiveLink
 					key={i}
 					href={`${route}/${i + 1}?${queryParams}` as Route}

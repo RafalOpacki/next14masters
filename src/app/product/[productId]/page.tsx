@@ -1,6 +1,6 @@
-import { notFound } from "next/navigation";
 import { Suspense } from "react";
-import { ProductGetByIdDocument } from "@/gql/graphql";
+import { notFound } from "next/navigation";
+import { ProductGetByIdDocument, ReviewsGetByProductIdDocument } from "@/gql/graphql";
 import { executeGraphql } from "@/graphql/executeGraphql";
 import { ProductDetails } from "@/ui/molecules/ProductDetails/ProductDetails";
 import { RelatedProducts } from "@/ui/organisms/RelatedProducts/RelatedProducts";
@@ -32,13 +32,29 @@ export default async function ProductPage({ params: { productId } }: Params) {
 		notFound();
 	}
 
+	const { product: productWithReviews } = await executeGraphql({
+		query: ReviewsGetByProductIdDocument,
+		variables: { id: productId },
+		// TODO - add revalidation
+	});
+
+	if (!productWithReviews) {
+		notFound();
+	}
+
 	return (
 		<section>
 			<ProductDetails product={product} />
 			<Suspense>
 				<RelatedProducts />
 			</Suspense>
-			<Reviews productId={product.id} />
+			<Suspense>
+				<Reviews
+					productId={product.id}
+					reviews={productWithReviews.reviews}
+					rating={productWithReviews.rating}
+				/>
+			</Suspense>
 		</section>
 	);
 }

@@ -1,6 +1,7 @@
 fragment Review on Review {
 	id
 	author
+	email
 	title
 	description
 	rating

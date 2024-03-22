@@ -16,10 +16,11 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
 	children,
-	cartModal,
+	// TODO cart modal
+	// cartModal,
 }: Readonly<{
 	children: ReactNode;
-	cartModal: ReactNode;
+	// cartModal: ReactNode;
 }>) {
 	return (
 		<ClerkProvider>
@@ -30,7 +31,7 @@ export default function RootLayout({
 						<div className="mx-auto w-full max-w-2xl lg:max-w-7xl">{children}</div>
 					</main>
 					<Footer />
-					{cartModal}
+					{/* {cartModal} */}
 				</body>
 			</html>
 		</ClerkProvider>

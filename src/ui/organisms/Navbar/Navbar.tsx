@@ -34,32 +34,34 @@ export const Navbar = async () => {
 	const { collections } = await executeGraphql({ query: CollectionsGetMenuItemsDocument });
 
 	return (
-		<nav className="mx-auto flex h-full max-w-2xl items-center justify-between lg:max-w-7xl">
-			<ul className="flex h-full items-center gap-8">
-				{navItems.map(({ href, title, exact }) => {
-					return <NavbarMenuItem key={title} href={href} title={title} exact={exact} />;
-				})}
-				{collections.data.map(({ name, slug }) => {
-					return (
-						<NavbarMenuItem
-							key={name}
-							href={`/collections/${slug}` as Route}
-							title={name}
-							exact={false}
-						/>
-					);
-				})}
-				{categories.data.map(({ name, slug }) => {
-					return (
-						<NavbarMenuItem
-							key={name}
-							href={`/categories/${slug}` as Route}
-							title={name}
-							exact={false}
-						/>
-					);
-				})}
-			</ul>
+		<div className="mx-auto flex h-full max-w-2xl items-center justify-between lg:max-w-7xl">
+			<nav className="h-full">
+				<ul className="flex h-full items-center gap-8">
+					{navItems.map(({ href, title, exact }) => {
+						return <NavbarMenuItem key={title} href={href} title={title} exact={exact} />;
+					})}
+					{collections.data.map(({ name, slug }) => {
+						return (
+							<NavbarMenuItem
+								key={name}
+								href={`/collections/${slug}` as Route}
+								title={name}
+								exact={false}
+							/>
+						);
+					})}
+					{categories.data.map(({ name, slug }) => {
+						return (
+							<NavbarMenuItem
+								key={name}
+								href={`/categories/${slug}` as Route}
+								title={name}
+								exact={false}
+							/>
+						);
+					})}
+				</ul>
+			</nav>
 			<div className="flex items-center gap-8">
 				<SearchBar />
 				<CartButton />
@@ -73,6 +75,6 @@ export const Navbar = async () => {
 					</SignedOut>
 				</div>
 			</div>
-		</nav>
+		</div>
 	);
 };

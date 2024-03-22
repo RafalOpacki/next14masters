@@ -21,7 +21,7 @@ export const ProductListItemDescription = ({
 				<h3 className="text-sm font-semibold text-gray-700 dark:text-gray-200">{name}</h3>
 				<p className="text-sm font-medium text-gray-900 dark:text-gray-400">
 					<span className="sr-only">Cena:</span>
-					{priceFormatter(price / 100)}
+					<span data-testid="product-price">{priceFormatter(price / 100)}</span>
 				</p>
 			</div>
 			<div className="flex items-center justify-between">
@@ -31,7 +31,9 @@ export const ProductListItemDescription = ({
 				</p>
 				{rating && (
 					<div className="flex items-center">
-						<p className="small-caps mr-2 text-xs">{Math.round(rating * 10) / 10}/5</p>
+						<p className="small-caps mr-2 text-xs" data-testid="product-rating">
+							{Math.round(rating * 10) / 10}/5
+						</p>
 						<StarRating size={12} rating={rating} />
 					</div>
 				)}

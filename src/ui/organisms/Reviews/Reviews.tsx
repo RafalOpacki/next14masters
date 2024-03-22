@@ -1,36 +1,46 @@
-import { Suspense } from "react";
-import { notFound } from "next/navigation";
-import { ReviewsGetByProductIdDocument, type ProductDetailsFragment } from "@/gql/graphql";
-import { executeGraphql } from "@/graphql/executeGraphql";
+"use client";
+
+import { Suspense, useOptimistic } from "react";
+import {
+	type ProductDetailsFragment,
+	type ReviewDataFragment,
+	type ReviewFragment,
+} from "@/gql/graphql";
 import { StarRating } from "@/ui/molecules/StarRating/StarRating";
 import { ReviewForm } from "@/ui/organisms/ReviewForm/ReviewForm";
 import { ReviewsList } from "@/ui/organisms/ReviewsList/ReviewsList";
 
 type ReviewsProps = {
 	productId: ProductDetailsFragment["id"];
+	rating: ReviewDataFragment["rating"];
+	reviews: ReviewFragment[];
 };
 
-export const Reviews = async ({ productId }: ReviewsProps) => {
-	const { product } = await executeGraphql({
-		query: ReviewsGetByProductIdDocument,
-		variables: { id: productId },
-	});
+export const Reviews = ({ productId, reviews, rating }: ReviewsProps) => {
+	const [optimisticReviews, setOptimisticReviews] = useOptimistic(
+		reviews,
+		(currentReviews, newReview: ReviewFragment) => {
+			return [newReview, ...currentReviews];
+		},
+	);
 
-	if (!product) {
-		notFound();
-	}
+	const handleAddNewReview = (review: ReviewFragment) => {
+		setOptimisticReviews(review);
+	};
 
 	return (
 		<section className="mt-20">
 			<h2 className="text-2xl font-bold tracking-tight text-gray-900">Customer reviews</h2>
 			<div className="mt-3 flex items-center gap-2">
-				<StarRating rating={product.rating} />
-				<p className="text-md ml-2 text-gray-900">Based on {product.reviews.length} reviews</p>
+				<StarRating rating={rating} />
+				<p className="text-md ml-2 text-gray-900">Based on {optimisticReviews.length} reviews</p>
 			</div>
 			<div className="mt-10 grid gap-20 lg:grid-cols-2">
-				<ReviewForm productId={productId} />
 				<Suspense>
-					<ReviewsList reviews={product.reviews} />
+					<ReviewForm productId={productId} handleAddNewReview={handleAddNewReview} />
+				</Suspense>
+				<Suspense>
+					<ReviewsList reviews={optimisticReviews} />
 				</Suspense>
 			</div>
 		</section>
