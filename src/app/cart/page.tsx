@@ -19,10 +19,10 @@ export default async function CartPage() {
 		cache: "no-store",
 	});
 
-	// TODO
-	// if (!cartId || cartFindOrCreate.items.length === 0) {
-	// 	redirect("/");
-	// }
+	// TODO;
+	if (!cartId) {
+		return;
+	}
 
 	const totalPrice = cartFindOrCreate.items.reduce((prevValue, currValue) => {
 		return (prevValue = prevValue + currValue.product.price * currValue.quantity);
@@ -46,8 +46,7 @@ export default async function CartPage() {
 								<div>
 									<p className="font-medium text-slate-700">{product.name}</p>
 									<p className="mt-1 text-sm text-slate-500">{product.categories[0].name}</p>
-									{/* TODO */}
-									<ProductCounter quantity={quantity} cartId={cartId!} productId={product.id} />
+									<ProductCounter quantity={quantity} cartId={cartId} productId={product.id} />
 								</div>
 							</div>
 							<p className="small-caps p-4 text-right font-semibold text-slate-900">
