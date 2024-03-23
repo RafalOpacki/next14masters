@@ -1,9 +1,5 @@
 "use server";
 
-import { revalidateTag } from "next/cache";
-import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import Stripe from "stripe";
 import {
 	CartAddItemDocument,
 	CartChangeItemQuantityDocument,
@@ -11,55 +7,71 @@ import {
 	CartRemoveItemDocument,
 } from "@/gql/graphql";
 import { executeGraphql } from "@/graphql/executeGraphql";
+import { revalidateTag } from "next/cache";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import Stripe from "stripe";
 
-export const getCartFromCookies = async () => {
+export const getCartFromCookies = () => {
 	const cartId = cookies().get("cartId")?.value;
 	return cartId;
 };
 
 export const changeItemQuantity = async (cartId: string, productId: string, quantity: number) => {
-	const cart = executeGraphql({
+	await executeGraphql({
 		query: CartChangeItemQuantityDocument,
 		variables: {
 			id: cartId,
-			quantity: quantity,
-			productId: productId,
+			quantity,
+			productId,
 		},
 		cache: "no-store",
+		next: {
+			tags: ["cart"],
+		},
 	});
 	revalidateTag("cart");
-
-	return cart;
 };
 
+// TODO - dać to na froncie pod przyciskiem
 export const removeItem = async (cartId: string, productId: string) => {
-	revalidateTag("cart");
-
-	const cart = await executeGraphql({
+	await executeGraphql({
 		query: CartRemoveItemDocument,
 		variables: {
 			id: cartId,
 			productId: productId,
 		},
 		cache: "no-store",
+		next: {
+			tags: ["cart"],
+		},
 	});
 	revalidateTag("cart");
-
-	return cart;
 };
 
-export async function getCartById() {
-	const cartId = cookies().get("cartId")?.value;
+export const findCartOrCreate = async () => {
+	"use server";
+	const cartIdFromCookie = getCartFromCookies();
 
-	return executeGraphql({
+	const cart = await executeGraphql({
 		query: CartFindOrCreateDocument,
 		variables: {
-			id: cartId,
+			id: cartIdFromCookie,
 		},
 		cache: "no-store",
+		next: {
+			tags: ["cart"],
+		},
 	});
-}
-export async function addToCart(id: string, productId: string) {
+
+	if (!cartIdFromCookie) {
+		cookies().set("cartId", cart.cartFindOrCreate.id);
+	}
+
+	return cart.cartFindOrCreate;
+};
+
+export const addToCart = async (id: string, productId: string) => {
 	const cart = await executeGraphql({
 		query: CartAddItemDocument,
 		variables: {
@@ -71,27 +83,20 @@ export async function addToCart(id: string, productId: string) {
 			},
 		},
 		cache: "no-store",
+		next: {
+			tags: ["cart"],
+		},
 	});
 
 	revalidateTag("cart");
 
 	return cart;
-}
-
-export async function createCart() {
-	const cart = await executeGraphql({
-		query: CartFindOrCreateDocument,
-		variables: {},
-		cache: "no-store",
-	});
-
-	return cart;
-}
+};
 
 export const handlePaymentAction = async () => {
 	"use server";
 
-	const { cartFindOrCreate } = await getCartById();
+	const cartFindOrCreate = await findCartOrCreate();
 
 	if (!cartFindOrCreate) {
 		return;

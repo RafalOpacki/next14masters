@@ -1,21 +1,9 @@
-import Link from "next/link";
-import { cookies } from "next/headers";
 import { ShoppingCart } from "lucide-react";
-import { CartFindOrCreateDocument } from "@/gql/graphql";
-import { executeGraphql } from "@/graphql/executeGraphql";
+import Link from "next/link";
+import { findCartOrCreate } from "@/app/cart/actions";
 
 export const CartButton = async () => {
-	const cartId = cookies().get("cartId")?.value;
-
-	const { cartFindOrCreate } = await executeGraphql({
-		query: CartFindOrCreateDocument,
-		variables: {
-			id: cartId,
-		},
-		next: {
-			tags: ["cart"],
-		},
-	});
+	const cartFindOrCreate = await findCartOrCreate();
 
 	const qty = cartFindOrCreate.items.length ?? 0;
 
