@@ -46,7 +46,8 @@ export default async function CartPage() {
 								<div>
 									<p className="font-medium text-slate-700">{product.name}</p>
 									<p className="mt-1 text-sm text-slate-500">{product.categories[0].name}</p>
-									<ProductCounter quantity={quantity} cartId={cartId} productId={product.id} />
+									{/* TODO */}
+									<ProductCounter quantity={quantity} cartId={cartId!} productId={product.id} />
 								</div>
 							</div>
 							<p className="small-caps p-4 text-right font-semibold text-slate-900">
