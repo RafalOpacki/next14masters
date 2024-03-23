@@ -126,8 +126,8 @@ export const handlePaymentAction = async () => {
 			};
 		}),
 		mode: "payment",
-		success_url: `${process.env.HOST_URL}/cart/success?sessionId={CHECKOUT_SESSION_ID}`,
-		cancel_url: `${process.env.HOST_URL}/cart/cancel`,
+		success_url: `localhost:3000/cart/success?sessionId={CHECKOUT_SESSION_ID}`,
+		cancel_url: `localhost:3000/cart/cancel`,
 	});
 
 	if (!checkoutSession.url) {
