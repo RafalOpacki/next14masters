@@ -1,6 +1,6 @@
 import { cookies } from "next/headers";
 import Image from "next/image";
-import { redirect } from "next/navigation";
+import { handlePaymentAction } from "@/app/cart/actions";
 import { CartFindOrCreateDocument } from "@/gql/graphql";
 import { executeGraphql } from "@/graphql/executeGraphql";
 import { ProductCounter } from "@/ui/atoms/ProductCounter/ProductCounter";
@@ -19,9 +19,10 @@ export default async function CartPage() {
 		cache: "no-store",
 	});
 
-	if (!cartId || cartFindOrCreate.items.length === 0) {
-		redirect("/");
-	}
+	// TODO
+	// if (!cartId || cartFindOrCreate.items.length === 0) {
+	// 	redirect("/");
+	// }
 
 	const totalPrice = cartFindOrCreate.items.reduce((prevValue, currValue) => {
 		return (prevValue = prevValue + currValue.product.price * currValue.quantity);
@@ -45,7 +46,8 @@ export default async function CartPage() {
 								<div>
 									<p className="font-medium text-slate-700">{product.name}</p>
 									<p className="mt-1 text-sm text-slate-500">{product.categories[0].name}</p>
-									<ProductCounter quantity={quantity} cartId={cartId} productId={product.id} />
+									{/* TODO */}
+									<ProductCounter quantity={quantity} cartId={cartId!} productId={product.id} />
 								</div>
 							</div>
 							<p className="small-caps p-4 text-right font-semibold text-slate-900">
@@ -72,12 +74,14 @@ export default async function CartPage() {
 				</div>
 			</div>
 			<div className="mt-10 flex justify-end">
-				<button
-					type="submit"
-					className="rounded border border-transparent bg-blue-500 px-6 py-4 font-medium text-slate-50 hover:bg-blue-600 disabled:bg-gray-300"
-				>
-					Checkout
-				</button>
+				<form action={handlePaymentAction}>
+					<button
+						type="submit"
+						className="rounded border border-transparent bg-blue-500 px-6 py-4 font-medium text-slate-50 hover:bg-blue-600 disabled:bg-gray-300"
+					>
+						Checkout
+					</button>
+				</form>
 			</div>
 		</>
 	);
