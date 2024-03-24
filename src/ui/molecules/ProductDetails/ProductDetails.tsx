@@ -1,4 +1,5 @@
 import { revalidateTag } from "next/cache";
+import { cookies } from "next/headers";
 import { addToCart, changeItemQuantity, findCartOrCreate } from "@/app/cart/actions";
 import { type ProductDetailsFragment } from "@/gql/graphql";
 import { AddToCartButton } from "@/ui/atoms/AddToCartButton/AddToCartButton";
@@ -17,6 +18,11 @@ export const ProductDetails = ({ product }: ProductDetailsProps) => {
 		if (!cartFindOrCreate) {
 			throw new Error("Failed to create cart");
 		}
+
+		cookies().set("cartId", cartFindOrCreate.id, {
+			httpOnly: true,
+			sameSite: "strict",
+		});
 
 		const itemFromCart = cartFindOrCreate.items.filter((item) => item.product.id === product.id);
 

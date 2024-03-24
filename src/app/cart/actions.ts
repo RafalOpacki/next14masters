@@ -50,7 +50,6 @@ export const removeItem = async (cartId: string, productId: string) => {
 };
 
 export const findCartOrCreate = async () => {
-	"use server";
 	const cartIdFromCookie = getCartFromCookies();
 
 	const cart = await executeGraphql({
@@ -63,10 +62,6 @@ export const findCartOrCreate = async () => {
 			tags: ["cart"],
 		},
 	});
-
-	if (!cartIdFromCookie) {
-		cookies().set("cartId", cart.cartFindOrCreate.id);
-	}
 
 	return cart.cartFindOrCreate;
 };
