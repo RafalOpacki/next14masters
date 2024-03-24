@@ -1,6 +1,6 @@
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
-import { addToCart, changeItemQuantity, findCartOrCreate } from "@/app/cart/actions";
+import { addToCart, changeItemQuantity, createCart, getCartById } from "@/app/cart/actions";
 import { type ProductDetailsFragment } from "@/gql/graphql";
 import { AddToCartButton } from "@/ui/atoms/AddToCartButton/AddToCartButton";
 import { ProductDetailsDescription } from "@/ui/atoms/ProductDetailsDescription/ProductDetailsDescription";
@@ -10,30 +10,52 @@ type ProductDetailsProps = {
 	product: ProductDetailsFragment;
 };
 
-export const ProductDetails = ({ product }: ProductDetailsProps) => {
+async function getOrCreateCart() {
+	"use server";
+	const cartId = cookies().get("cartId")?.value;
+
+	if (cartId) {
+		const cart = await getCartById();
+		if (cart) {
+			return cart;
+		}
+	}
+
+	const cart = await createCart();
+
+	cookies().set("cartId", cart.id, {
+		httpOnly: true,
+		sameSite: "strict",
+	});
+
+	if (!cart) {
+		throw new Error("Cart not found or created");
+	}
+
+	return cart;
+}
+
+export const ProductDetails = async ({ product }: ProductDetailsProps) => {
 	async function addProductToCartAction() {
 		"use server";
-		const cartFindOrCreate = await findCartOrCreate();
+		const cart = await getOrCreateCart();
 
-		if (!cartFindOrCreate) {
-			throw new Error("Failed to create cart");
+		if (!cart) {
+			throw new Error("Cart not found or created");
 		}
 
-		cookies().set("cartId", cartFindOrCreate.id, {
-			httpOnly: true,
-			sameSite: "strict",
-		});
+		const productId = product.id;
+		const existingItem = cart.items.find((item) => item.product.id === productId);
 
-		const itemFromCart = cartFindOrCreate.items.filter((item) => item.product.id === product.id);
+		if (existingItem) {
+			const updatedQuantity: number = existingItem.quantity ? existingItem.quantity + 1 : 1;
 
-		if (itemFromCart && itemFromCart.length > 0) {
-			await changeItemQuantity(
-				cartFindOrCreate.id,
-				product.id,
-				Number(itemFromCart[0]?.quantity) + 1,
-			);
+			await changeItemQuantity(cart.id, productId, updatedQuantity);
+
+			revalidateTag("cart");
+			return;
 		} else {
-			await addToCart(cartFindOrCreate.id, product.id);
+			await addToCart(cart.id, product.id);
 		}
 
 		revalidateTag("cart");
