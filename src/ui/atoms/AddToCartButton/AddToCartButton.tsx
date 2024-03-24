@@ -11,12 +11,22 @@ export const AddToCartButton = () => {
 			data-testid="add-to-cart-button"
 			disabled={pending}
 			type="submit"
-			className={clsx("mt-6 w-full rounded-md border bg-slate-700 px-8 py-3 text-white", {
-				"bg-slate-400": pending,
-				"cursor-wait": pending,
-			})}
+			className={clsx(
+				"mt-6 flex w-full items-center justify-center rounded-md border bg-slate-700 px-8 py-3 text-white",
+				{
+					"bg-slate-400": pending,
+					"cursor-wait": pending,
+				},
+			)}
 		>
-			Add to cart
+			{pending ? (
+				<div
+					className="flex animate-spin items-center justify-center rounded-full border-8 border-gray-500 border-t-transparent"
+					aria-busy="true"
+				/>
+			) : (
+				<> Add to cart</>
+			)}
 		</button>
 	);
 };
