@@ -21,7 +21,7 @@ type ReviewFormProps = {
 
 export const ReviewForm = ({ productId, handleAddNewReview }: ReviewFormProps) => {
 	const [rating, setRating] = useState<number | null>(null);
-
+	// TODO - actions.ts
 	const submitFormAction = async (formData: FormData) => {
 		const newReview = {
 			// TODO

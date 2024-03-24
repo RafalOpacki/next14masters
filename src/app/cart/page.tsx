@@ -1,27 +1,14 @@
-import { cookies } from "next/headers";
 import Image from "next/image";
-import { handlePaymentAction } from "@/app/cart/actions";
-import { CartFindOrCreateDocument } from "@/gql/graphql";
-import { executeGraphql } from "@/graphql/executeGraphql";
+import { redirect } from "next/navigation";
+import { findCartOrCreate, handlePaymentAction } from "@/app/cart/actions";
 import { ProductCounter } from "@/ui/atoms/ProductCounter/ProductCounter";
 import { priceFormatter } from "@/utils/priceFormatter";
 
 export default async function CartPage() {
-	const cartId = cookies().get("cartId")?.value;
-	const { cartFindOrCreate } = await executeGraphql({
-		query: CartFindOrCreateDocument,
-		variables: {
-			id: cartId,
-		},
-		next: {
-			tags: ["cart"],
-		},
-		cache: "no-store",
-	});
+	const cartFindOrCreate = await findCartOrCreate();
 
-	// TODO;
-	if (!cartId) {
-		return;
+	if (!cartFindOrCreate) {
+		redirect("/");
 	}
 
 	const totalPrice = cartFindOrCreate.items.reduce((prevValue, currValue) => {
@@ -46,7 +33,11 @@ export default async function CartPage() {
 								<div>
 									<p className="font-medium text-slate-700">{product.name}</p>
 									<p className="mt-1 text-sm text-slate-500">{product.categories[0].name}</p>
-									<ProductCounter quantity={quantity} cartId={cartId} productId={product.id} />
+									<ProductCounter
+										quantity={quantity}
+										cartId={cartFindOrCreate.id}
+										productId={product.id}
+									/>
 								</div>
 							</div>
 							<p className="small-caps p-4 text-right font-semibold text-slate-900">
