@@ -2,15 +2,32 @@
 
 import { revalidateTag } from "next/cache";
 import { cookies } from "next/headers";
-import { redirect } from "next/navigation";
-import Stripe from "stripe";
 import {
 	CartAddItemDocument,
 	CartChangeItemQuantityDocument,
 	CartFindOrCreateDocument,
+	CartGetByIdDocument,
 	CartRemoveItemDocument,
 } from "@/gql/graphql";
 import { executeGraphql } from "@/graphql/executeGraphql";
+
+export const getCartById = async () => {
+	const cartId = cookies().get("cartId")?.value;
+
+	if (!cartId) {
+		return;
+	}
+
+	const cart = await executeGraphql({
+		query: CartGetByIdDocument,
+		variables: {
+			id: cartId,
+		},
+		cache: "no-store",
+	});
+
+	return cart.cart;
+};
 
 export const getCartFromCookies = () => {
 	const cartId = cookies().get("cartId")?.value;
@@ -42,14 +59,10 @@ export const removeItem = async (cartId: string, productId: string) => {
 			productId: productId,
 		},
 		cache: "no-store",
-		next: {
-			tags: ["cart"],
-		},
 	});
-	revalidateTag("cart");
 };
 
-export const findCartOrCreate = async () => {
+export const createCart = async () => {
 	const cartIdFromCookie = getCartFromCookies();
 
 	const cart = await executeGraphql({
@@ -58,11 +71,7 @@ export const findCartOrCreate = async () => {
 			id: cartIdFromCookie,
 		},
 		cache: "no-store",
-		next: {
-			tags: ["cart"],
-		},
 	});
-	revalidateTag("cart");
 
 	return cart.cartFindOrCreate;
 };
@@ -79,62 +88,58 @@ export const addToCart = async (id: string, productId: string) => {
 			},
 		},
 		cache: "no-store",
-		next: {
-			tags: ["cart"],
-		},
 	});
-
-	revalidateTag("cart");
 
 	return cart;
 };
 
-export const handlePaymentAction = async () => {
-	"use server";
+// TODO
+// export const handlePaymentAction = async () => {
+// 	"use server";
 
-	const cartFindOrCreate = await findCartOrCreate();
+// 	const cartFindOrCreate = await findCartOrCreate();
 
-	if (!cartFindOrCreate) {
-		return;
-	}
+// 	if (!cartFindOrCreate) {
+// 		return;
+// 	}
 
-	if (!process.env.STRIPE_SECRET_KEY) {
-		throw new Error("Missing STRIPE_SECRET_KEY");
-	}
+// 	if (!process.env.STRIPE_SECRET_KEY) {
+// 		throw new Error("Missing STRIPE_SECRET_KEY");
+// 	}
 
-	const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-		apiVersion: "2023-10-16",
-		typescript: true,
-	});
+// 	const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
+// 		apiVersion: "2023-10-16",
+// 		typescript: true,
+// 	});
 
-	const checkoutSession = await stripe.checkout.sessions.create({
-		payment_method_types: ["card", "p24"],
-		metadata: {
-			cartId: cartFindOrCreate.id,
-		},
-		line_items: cartFindOrCreate.items.map(({ product, quantity }) => {
-			return {
-				price_data: {
-					currency: "eur",
-					product_data: {
-						name: product.name,
-						description: product.description,
-						images: product.images.map(({ url }) => url),
-					},
-					unit_amount: product.price * quantity,
-				},
-				quantity,
-			};
-		}),
-		mode: "payment",
-		success_url: `localhost:3000/cart/success?sessionId={CHECKOUT_SESSION_ID}`,
-		cancel_url: `localhost:3000/cart/cancel`,
-	});
+// 	const checkoutSession = await stripe.checkout.sessions.create({
+// 		payment_method_types: ["card", "p24"],
+// 		metadata: {
+// 			cartId: cartFindOrCreate.id,
+// 		},
+// 		line_items: cartFindOrCreate.items.map(({ product, quantity }) => {
+// 			return {
+// 				price_data: {
+// 					currency: "eur",
+// 					product_data: {
+// 						name: product.name,
+// 						description: product.description,
+// 						images: product.images.map(({ url }) => url),
+// 					},
+// 					unit_amount: product.price * quantity,
+// 				},
+// 				quantity,
+// 			};
+// 		}),
+// 		mode: "payment",
+// 		success_url: `localhost:3000/cart/success?sessionId={CHECKOUT_SESSION_ID}`,
+// 		cancel_url: `localhost:3000/cart/cancel`,
+// 	});
 
-	if (!checkoutSession.url) {
-		throw new Error("Could not create checkout session");
-	}
+// 	if (!checkoutSession.url) {
+// 		throw new Error("Could not create checkout session");
+// 	}
 
-	cookies().set("cartId", "");
-	redirect(checkoutSession.url);
-};
+// 	cookies().set("cartId", "");
+// 	redirect(checkoutSession.url);
+// };
