@@ -1,5 +1,5 @@
 import { revalidateTag } from "next/cache";
-import { addToCart, changeItemQuantity, findCartOrCreate, getCartById } from "@/app/cart/actions";
+import { addToCart, changeItemQuantity, findCartOrCreate } from "@/app/cart/actions";
 import { type ProductDetailsFragment } from "@/gql/graphql";
 import { AddToCartButton } from "@/ui/atoms/AddToCartButton/AddToCartButton";
 import { ProductDetailsDescription } from "@/ui/atoms/ProductDetailsDescription/ProductDetailsDescription";
