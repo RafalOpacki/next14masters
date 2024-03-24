@@ -62,6 +62,7 @@ export const findCartOrCreate = async () => {
 			tags: ["cart"],
 		},
 	});
+	revalidateTag("cart");
 
 	return cart.cartFindOrCreate;
 };
