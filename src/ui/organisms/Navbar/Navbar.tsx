@@ -2,6 +2,7 @@ import { type Route } from "next";
 import { SignInButton, SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import { CategoriesGetMenuItemsDocument, CollectionsGetMenuItemsDocument } from "@/gql/graphql";
 import { executeGraphql } from "@/graphql/executeGraphql";
+import { CartButton } from "@/ui/atoms/CartButton/CartButton";
 import { NavbarMenuItem } from "@/ui/molecules/NavbarMenuItem/NavbarMenuItem";
 import { SearchBar } from "@/ui/molecules/SearchBar/SearchBar";
 
@@ -63,7 +64,7 @@ export const Navbar = async () => {
 			</nav>
 			<div className="flex items-center gap-8">
 				<SearchBar />
-				{/* <CartButton /> */}
+				<CartButton />
 				<div>
 					{/* TODO - osobny komponent na to */}
 					<SignedIn>

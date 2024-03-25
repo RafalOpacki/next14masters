@@ -1,8 +1,8 @@
+import { type ReactNode } from "react";
+import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import clsx from "clsx";
-import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
-import { type ReactNode } from "react";
 import { Footer } from "@/ui/organisms/Footer/Footer";
 import { Header } from "@/ui/organisms/Header/Header";
 import "./globals.css";
@@ -16,11 +16,10 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
 	children,
-	// TODO cart modal
-	// cartModal,
+	cartModal,
 }: Readonly<{
 	children: ReactNode;
-	// cartModal: ReactNode;
+	cartModal: ReactNode;
 }>) {
 	return (
 		<ClerkProvider>
@@ -31,7 +30,7 @@ export default function RootLayout({
 						<div className="mx-auto w-full max-w-2xl lg:max-w-7xl">{children}</div>
 					</main>
 					<Footer />
-					{/* {cartModal} */}
+					{cartModal}
 				</body>
 			</html>
 		</ClerkProvider>

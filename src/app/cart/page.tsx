@@ -1,11 +1,11 @@
 import Image from "next/image";
 import { redirect } from "next/navigation";
-import { getCartById } from "@/app/cart/actions";
+import { findCartOrCreate, handlePaymentAction } from "@/app/cart/actions";
 import { ProductCounter } from "@/ui/atoms/ProductCounter/ProductCounter";
 import { priceFormatter } from "@/utils/priceFormatter";
 
 export default async function CartPage() {
-	const cartFindOrCreate = await getCartById();
+	const cartFindOrCreate = await findCartOrCreate();
 
 	if (!cartFindOrCreate) {
 		redirect("/");
@@ -63,7 +63,7 @@ export default async function CartPage() {
 					</div>
 				</div>
 			</div>
-			{/* <div className="mt-10 flex justify-end">
+			<div className="mt-10 flex justify-end">
 				<form action={handlePaymentAction}>
 					<button
 						type="submit"
@@ -72,7 +72,7 @@ export default async function CartPage() {
 						Checkout
 					</button>
 				</form>
-			</div> */}
+			</div>
 		</>
 	);
 }
